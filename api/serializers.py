@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework.exceptions import APIException
 from rest_framework.serializers import ModelSerializer, EmailField, CharField
+from rest_framework_jwt.settings import api_settings
+
 from .models import Proposal
 User = get_user_model()
 
@@ -80,5 +82,10 @@ class UserLoginSerializer(ModelSerializer):
                 raise APIException({'error': "Incorrect username and password!"})
         else:
             raise APIException({'error': "username is not valid!"})
-        data['token'] = 'some random token'
+        # create jwt token
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = jwt_payload_handler(user)
+        # send the data back to the user.
+        data['token'] = jwt_encode_handler(payload)
         return data
