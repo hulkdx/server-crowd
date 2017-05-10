@@ -4,13 +4,13 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from website import settings
-
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic_url = models.CharField(max_length=200)
 
+    def __str__(self):
+        return "user: " + str(self.user)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

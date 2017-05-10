@@ -12,6 +12,7 @@ User = get_user_model()
 
 class ProposalSerializer(ModelSerializer):
     category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
+    user_profile_pic = SlugRelatedField(source='user', slug_field='profile_pic_url', read_only=True)
 
     class Meta:
         model = Proposal
@@ -23,7 +24,8 @@ class ProposalSerializer(ModelSerializer):
             'description',
             'articles',
             'discussions',
-            'category_source'
+            'category_source',
+            'user_profile_pic'
         ]
 
 
