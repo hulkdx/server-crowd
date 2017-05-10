@@ -1,23 +1,35 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework.exceptions import APIException
-from rest_framework.fields import ReadOnlyField
-from rest_framework.relations import StringRelatedField, RelatedField, SlugRelatedField
+from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer, EmailField, CharField
 from rest_framework_jwt.settings import api_settings
 
-from .models import Proposal
+from .models import Proposal, Profile
+
 User = get_user_model()
+
+
+class ProfileSerializer(ModelSerializer):
+    first_name = SlugRelatedField(source='user', slug_field='first_name', read_only=True)
+    last_name = SlugRelatedField(source='user', slug_field='last_name', read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            'profile_pic_url',
+            'first_name',
+            'last_name'
+        ]
 
 
 class ProposalSerializer(ModelSerializer):
     category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
-    user_profile_pic = SlugRelatedField(source='user', slug_field='profile_pic_url', read_only=True)
+    user = ProfileSerializer(read_only=True)
 
     class Meta:
         model = Proposal
         fields = [
-            'user',
             'category',
             'title',
             'deadline',
@@ -25,7 +37,7 @@ class ProposalSerializer(ModelSerializer):
             'articles',
             'discussions',
             'category_source',
-            'user_profile_pic'
+            'user'
         ]
 
 
@@ -80,7 +92,7 @@ class UserLoginSerializer(ModelSerializer):
             'token',
         ]
         extra_kwargs = {"password":
-                            {"write_only": True} }
+                            {"write_only": True}}
 
     def validate(self, data):
         username = data.get("username", None)
