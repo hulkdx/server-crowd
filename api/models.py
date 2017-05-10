@@ -24,7 +24,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Proposal(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, on_delete=models.CASCADE)
+    user = models.ForeignKey('Profile', default=1, on_delete=models.CASCADE)
     category = models.ForeignKey('Category', default=None, on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=200)
     deadline = models.DateTimeField(default=timezone.now, blank=True, null=True)
