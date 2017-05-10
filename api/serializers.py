@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework.exceptions import APIException
+from rest_framework.fields import ReadOnlyField
+from rest_framework.relations import StringRelatedField, RelatedField, SlugRelatedField
 from rest_framework.serializers import ModelSerializer, EmailField, CharField
 from rest_framework_jwt.settings import api_settings
 
@@ -9,9 +11,20 @@ User = get_user_model()
 
 
 class ProposalSerializer(ModelSerializer):
+    category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
+
     class Meta:
         model = Proposal
-        fields = '__all__'
+        fields = [
+            'user',
+            'category',
+            'title',
+            'deadline',
+            'description',
+            'articles',
+            'discussions',
+            'category_source'
+        ]
 
 
 class UserCreateSerializer(ModelSerializer):
