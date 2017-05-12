@@ -43,4 +43,4 @@ class Category(models.Model):
     source = models.CharField(max_length=200)
 
     def __str__(self):
-        return "source: " + str(self.source)
+        return "name: " + str(self.name)
