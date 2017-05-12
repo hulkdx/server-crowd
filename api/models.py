@@ -38,6 +38,8 @@ class Proposal(models.Model):
 
 
 class Category(models.Model):
+    name = models.CharField(max_length=80, default="")
+    source_fill = models.CharField(max_length=200, default="")
     source = models.CharField(max_length=200)
 
     def __str__(self):
