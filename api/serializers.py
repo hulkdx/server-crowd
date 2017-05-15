@@ -44,6 +44,18 @@ class ProposalSerializer(ModelSerializer):
         ]
 
 
+class ProposalCreateSerializer(ModelSerializer):
+
+    class Meta:
+        model = Proposal
+        fields = [
+            'title',
+            'deadline',
+            'description',
+            'category',
+        ]
+
+
 class UserCreateSerializer(ModelSerializer):
     email2 = EmailField(label='Confirm Email')
 
