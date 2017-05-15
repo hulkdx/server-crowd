@@ -15,6 +15,9 @@ urlpatterns = [
     url(r'^register$', views.UserCreate.as_view(), name='register'),
     # /api/login
     url(r'^login', views.UserLogin.as_view(), name='login'),
+
+    # /api/category
+    url(r'^category$', views.CategoryListAPIView.as_view(), name='proposals'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

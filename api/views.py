@@ -5,12 +5,14 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
-from .serializers import ProposalSerializer, UserCreateSerializer, UserLoginSerializer, ProposalCreateSerializer
-from .models import Proposal, Profile
+from .serializers import ProposalSerializer, UserCreateSerializer, UserLoginSerializer, ProposalCreateSerializer, \
+    CategorySerializer
+from .models import Proposal, Profile, Category
 
 User = get_user_model()
 
 
+# --- Proposals ---
 # this class is not used yet
 class ProposalCreate(CreateAPIView):
     queryset = Proposal.objects.all()
@@ -48,3 +50,8 @@ class UserLogin(APIView):
             new_data = serializer.data
             return Response(new_data, status=HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+class CategoryListAPIView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

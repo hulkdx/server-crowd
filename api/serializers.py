@@ -5,7 +5,7 @@ from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer, EmailField, CharField
 from rest_framework_jwt.settings import api_settings
 
-from .models import Proposal, Profile
+from .models import Proposal, Profile, Category
 
 User = get_user_model()
 
@@ -54,6 +54,13 @@ class ProposalCreateSerializer(ModelSerializer):
             'description',
             'category',
         ]
+
+
+class CategorySerializer(ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = '__all__'
 
 
 class UserCreateSerializer(ModelSerializer):
