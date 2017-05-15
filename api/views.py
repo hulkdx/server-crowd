@@ -6,7 +6,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from .serializers import ProposalSerializer, UserCreateSerializer, UserLoginSerializer
-from .models import Proposal
+from .models import Proposal, Profile
 
 User = get_user_model()
 
@@ -17,7 +17,7 @@ class ProposalCreate(CreateAPIView):
     serializer_class = ProposalSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=Profile.objects.get(user=self.request.user))
 
 
 class ProposalListAPIView(ListAPIView):
