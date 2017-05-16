@@ -45,6 +45,10 @@ class ProposalSerializer(ModelSerializer):
 
 
 class ProposalCreateSerializer(ModelSerializer):
+    category_name = SlugRelatedField(source='category', slug_field='name', read_only=True)
+    category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
+    category_source_fill = SlugRelatedField(source='category', slug_field='source_fill', read_only=True)
+    user = ProfileSerializer(read_only=True)
 
     class Meta:
         model = Proposal
@@ -53,7 +57,16 @@ class ProposalCreateSerializer(ModelSerializer):
             'deadline',
             'description',
             'category',
+            'articles',
+            'discussions',
+            'category_name',
+            'category_source',
+            'category_source_fill',
+            'user'
         ]
+        extra_kwargs = {"category":
+                            {"write_only": True}
+                        }
 
 
 class CategorySerializer(ModelSerializer):
