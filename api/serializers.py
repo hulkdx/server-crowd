@@ -33,6 +33,7 @@ class ProposalSerializer(ModelSerializer):
     class Meta:
         model = Proposal
         fields = [
+            'id',
             'title',
             'deadline',
             'description',
