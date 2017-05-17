@@ -24,6 +24,7 @@ class ProfileSerializer(ModelSerializer):
 
 
 class ProposalSerializer(ModelSerializer):
+    category_id = SlugRelatedField(source='category', slug_field='id', read_only=True)
     category_name = SlugRelatedField(source='category', slug_field='name', read_only=True)
     category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
     category_source_fill = SlugRelatedField(source='category', slug_field='source_fill', read_only=True)
@@ -37,6 +38,7 @@ class ProposalSerializer(ModelSerializer):
             'description',
             'articles',
             'discussions',
+            'category_id',
             'category_name',
             'category_source',
             'category_source_fill',
