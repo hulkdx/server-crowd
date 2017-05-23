@@ -29,6 +29,8 @@ class Proposal(models.Model):
     title = models.CharField(max_length=200)
     deadline = models.DateTimeField(default=timezone.now, blank=True, null=True)
     description = models.CharField(max_length=500)
+    votedYes = models.IntegerField(default=0)
+    votedNo = models.IntegerField(default=0)
     articles = models.IntegerField(default=0)
     discussions = models.IntegerField(default=0)
     # TODO: ATTACHMENT
