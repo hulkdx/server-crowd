@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, BooleanField
 from rest_framework.exceptions import APIException
+from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer, EmailField, CharField
 from rest_framework_jwt.settings import api_settings
-
+from rest_framework.fields import CurrentUserDefault
 from .models import Proposal, Profile, Category
 
 User = get_user_model()
@@ -13,15 +14,23 @@ User = get_user_model()
 class ProfileSerializer(ModelSerializer):
     first_name = SlugRelatedField(source='user', slug_field='first_name', read_only=True)
     last_name = SlugRelatedField(source='user', slug_field='last_name', read_only=True)
+    is_your_proposal = SerializerMethodField('check_users')
+
+    def check_users(self, profile):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        return profile.user == user
 
     class Meta:
         model = Profile
         fields = [
             'profile_pic_url',
             'first_name',
-            'last_name'
+            'last_name',
+            'is_your_proposal'
         ]
-
 
 class ProposalSerializer(ModelSerializer):
     category_id = SlugRelatedField(source='category', slug_field='id', read_only=True)

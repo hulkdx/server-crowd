@@ -26,6 +26,11 @@ class ProposalListAPIView(ListAPIView):
     queryset = Proposal.objects.all()
     serializer_class = ProposalSerializer
 
+    # This will filter base on user
+    # def get_queryset(self):
+    #     user = Profile.objects.get(user=self.request.user)
+    #     return Proposal.objects.filter(user=user)
+
 
 class ProposalDetailAPIView(RetrieveAPIView):
     queryset = Proposal.objects.all()
