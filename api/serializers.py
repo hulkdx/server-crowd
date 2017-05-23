@@ -32,6 +32,7 @@ class ProfileSerializer(ModelSerializer):
             'is_your_proposal'
         ]
 
+
 class ProposalSerializer(ModelSerializer):
     category_id = SlugRelatedField(source='category', slug_field='id', read_only=True)
     category_name = SlugRelatedField(source='category', slug_field='name', read_only=True)
@@ -81,8 +82,17 @@ class ProposalCreateSerializer(ModelSerializer):
                         }
 
 
-class CategorySerializer(ModelSerializer):
+class ProposalVoteUpdateSerializer(ModelSerializer):
 
+    class Meta:
+        model = Proposal
+        fields = [
+            'votedYes',
+            'votedNo'
+        ]
+
+
+class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'

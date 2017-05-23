@@ -1,12 +1,14 @@
+import sys
 from django.contrib.auth import get_user_model
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from .serializers import ProposalSerializer, UserCreateSerializer, UserLoginSerializer, ProposalCreateSerializer, \
-    CategorySerializer
+    CategorySerializer, ProposalVoteUpdateSerializer
 from .models import Proposal, Profile, Category
 
 User = get_user_model()
@@ -35,6 +37,14 @@ class ProposalListAPIView(ListAPIView):
 class ProposalDetailAPIView(RetrieveAPIView):
     queryset = Proposal.objects.all()
     serializer_class = ProposalSerializer
+
+
+class ProposalVoteUpdate(UpdateAPIView):
+    queryset = Proposal.objects.all()
+    serializer_class = ProposalVoteUpdateSerializer
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
 
 # --- Users ---
