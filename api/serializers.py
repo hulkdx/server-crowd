@@ -38,6 +38,16 @@ class ProposalSerializer(ModelSerializer):
     category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
     category_source_fill = SlugRelatedField(source='category', slug_field='source_fill', read_only=True)
     user = ProfileSerializer(read_only=True)
+    are_you_voted = SerializerMethodField('check_voting')
+
+    def check_voting(self, proposal):
+        user = Profile.objects.get(user=self.context['request'].user)
+        proposal_user = ProposalVoteUser.objects.filter(
+            Q(user=user, proposal=proposal)
+        ).distinct()
+        if proposal_user.exists() and proposal_user.count() > 0:
+            return True
+        return False
 
     class Meta:
         model = Proposal
@@ -52,7 +62,8 @@ class ProposalSerializer(ModelSerializer):
             'category_name',
             'category_source',
             'category_source_fill',
-            'user'
+            'user',
+            'are_you_voted'
         ]
 
 
