@@ -203,11 +203,16 @@ class UserCreateSerializer(ModelSerializer):
 class UserLoginSerializer(ModelSerializer):
     token = CharField(allow_blank=True, read_only=True)
     username = CharField(allow_blank=True, required=False)
+    profile_pic_url = CharField(allow_blank=True, read_only=True)
 
     class Meta:
         model = User
         fields = [
             'username',
+            'first_name',
+            'last_name',
+            'email',
+            'profile_pic_url',
             'password',
             'token',
         ]
@@ -225,6 +230,10 @@ class UserLoginSerializer(ModelSerializer):
         ).distinct()
         if user.exists() and user.count() == 1:
             user = user.first()
+            data['first_name'] = user.first_name
+            data['last_name'] = user.last_name
+            data['email'] = user.email
+            data['profile_pic_url'] = Profile.objects.get(user=user).profile_pic_url
             if not user.check_password(password):
                 raise APIException({'error': "Incorrect username and password!"})
         else:
@@ -235,4 +244,5 @@ class UserLoginSerializer(ModelSerializer):
         payload = jwt_payload_handler(user)
         # send the data back to the user.
         data['token'] = jwt_encode_handler(payload)
+
         return data
