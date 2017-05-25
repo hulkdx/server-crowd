@@ -10,8 +10,9 @@ urlpatterns = [
     url(r'^proposal/(?P<pk>\d+)/$', views.ProposalDetailAPIView.as_view(), name='proposal'),
     # /api/proposal/create
     url(r'^proposal/create$', views.ProposalCreate.as_view(), name='proposals'),
-    # /api/proposal/vote
-    url(r'^proposal/(?P<pk>\d+)/vote$', views.ProposalVoteUpdate.as_view(), name='proposals'),
+
+    # /api/vote
+    url(r'^vote$', views.ProposalVoteUpdate.as_view(), name='proposals'),
 
     # /api/register
     url(r'^register$', views.UserCreate.as_view(), name='register'),

@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Q, BooleanField
+from django.db.models import Q
 from rest_framework.exceptions import APIException
 from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import SlugRelatedField
-from rest_framework.serializers import ModelSerializer, EmailField, CharField
+from rest_framework.serializers import ModelSerializer, EmailField, CharField, IntegerField, BooleanField
 from rest_framework_jwt.settings import api_settings
-from rest_framework.fields import CurrentUserDefault
-from .models import Proposal, Profile, Category
+from .models import Proposal, Profile, Category, ProposalVoteUser
 
 User = get_user_model()
 
@@ -83,13 +82,66 @@ class ProposalCreateSerializer(ModelSerializer):
 
 
 class ProposalVoteUpdateSerializer(ModelSerializer):
+    id = IntegerField()
+    vote_yes = BooleanField(default=False, write_only=True)
+    vote_no = BooleanField(write_only=True)
 
     class Meta:
         model = Proposal
         fields = [
-            'votedYes',
-            'votedNo'
+            'vote_yes',
+            'vote_no',
+            'id'
         ]
+
+    def create(self, validated_data):
+        id = validated_data['id']
+        proposal = Proposal.objects.filter(
+            Q(id=id)
+        ).distinct()
+        if proposal.exists() and proposal.count() == 1:
+            proposal = proposal.first()
+            user = Profile.objects.get(user=self.context['request'].user)
+            # TODO: users can only vote one time
+            proposal_user = ProposalVoteUser.objects.filter(
+                Q(user=user, proposal=proposal)
+            ).distinct()
+            if proposal_user.exists() and proposal_user.count() > 0:
+                raise APIException({'error': "the user already voted"})
+            # if proposal_user_exist.count() > 0:
+            #     Response(request.data, status=HTTP_400_BAD_REQUEST)
+            # if request.data.get("vote_yes", None):
+            #     ProposalVoteUser(
+            #         user=user,
+            #         proposal=proposal,
+            #         vote=True
+            #     ).save()
+            # elif request.data.get("vote_no", None):
+            #     ProposalVoteUser(
+            #         user=user,
+            #         proposal=proposal,
+            #         vote=False
+            #     ).save()
+            #
+            if validated_data.get('vote_yes', None):
+                ProposalVoteUser(
+                    user=user,
+                    proposal=proposal,
+                    vote=True
+                ).save()
+                proposal.votedYes = proposal.votedYes + 1
+            elif validated_data.get('vote_no', None):
+                ProposalVoteUser(
+                    user=user,
+                    proposal=proposal,
+                    vote=False
+                ).save()
+                proposal.votedNo = proposal.votedNo + 1
+            proposal.save()
+        else:
+            raise APIException({'error': "id is not valid!"})
+
+        return validated_data
 
 
 class CategorySerializer(ModelSerializer):

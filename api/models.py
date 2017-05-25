@@ -46,3 +46,9 @@ class Category(models.Model):
 
     def __str__(self):
         return "name: " + str(self.name)
+
+
+class ProposalVoteUser(models.Model):
+    user = models.ForeignKey('Profile')
+    proposal = models.ForeignKey('Proposal')
+    vote = models.BooleanField()

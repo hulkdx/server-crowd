@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from .serializers import ProposalSerializer, UserCreateSerializer, UserLoginSerializer, ProposalCreateSerializer, \
     CategorySerializer, ProposalVoteUpdateSerializer
-from .models import Proposal, Profile, Category
+from .models import Proposal, Profile, Category, ProposalVoteUser
 
 User = get_user_model()
 
@@ -39,12 +39,15 @@ class ProposalDetailAPIView(RetrieveAPIView):
     serializer_class = ProposalSerializer
 
 
-class ProposalVoteUpdate(UpdateAPIView):
-    queryset = Proposal.objects.all()
+class ProposalVoteUpdate(APIView):
     serializer_class = ProposalVoteUpdateSerializer
 
     def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+        serializer = ProposalVoteUpdateSerializer(context={'request': request}, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(user=Profile.objects.get(user=self.request.user))
+            return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 # --- Users ---
