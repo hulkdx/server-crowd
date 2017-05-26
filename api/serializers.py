@@ -11,7 +11,7 @@ User = get_user_model()
 
 
 # Profile
-class ProfileSerializer(ModelSerializer):
+class ProfileSerializerProposal(ModelSerializer):
     first_name = SlugRelatedField(source='user', slug_field='first_name', read_only=True)
     last_name = SlugRelatedField(source='user', slug_field='last_name', read_only=True)
     is_your_proposal = SerializerMethodField('check_users')
@@ -39,7 +39,7 @@ class ProposalSerializer(ModelSerializer):
     category_name = SlugRelatedField(source='category', slug_field='name', read_only=True)
     category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
     category_source_fill = SlugRelatedField(source='category', slug_field='source_fill', read_only=True)
-    user = ProfileSerializer(read_only=True)
+    user = ProfileSerializerProposal(read_only=True)
     are_you_voted = SerializerMethodField('check_voting')
 
     def check_voting(self, proposal):
@@ -73,7 +73,7 @@ class ProposalCreateSerializer(ModelSerializer):
     category_name = SlugRelatedField(source='category', slug_field='name', read_only=True)
     category_source = SlugRelatedField(source='category', slug_field='source', read_only=True)
     category_source_fill = SlugRelatedField(source='category', slug_field='source_fill', read_only=True)
-    user = ProfileSerializer(read_only=True)
+    user = ProfileSerializerProposal(read_only=True)
 
     class Meta:
         model = Proposal
@@ -253,8 +253,34 @@ class UserLoginSerializer(ModelSerializer):
 
 
 # Discussion
-# Category
+class ProfileSerializerDiscussion(ModelSerializer):
+    first_name = SlugRelatedField(source='user', slug_field='first_name', read_only=True)
+    last_name = SlugRelatedField(source='user', slug_field='last_name', read_only=True)
+
+    def check_users(self, profile):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        return profile.user == user
+
+    class Meta:
+        model = Profile
+        fields = [
+            'profile_pic_url',
+            'first_name',
+            'last_name',
+        ]
+
+
 class DiscussionSerializer(ModelSerializer):
+    user = ProfileSerializerDiscussion(read_only=True)
+
     class Meta:
         model = Discussion
-        fields = '__all__'
+        fields = [
+            'user',
+            'comment',
+            'upvoted',
+            'downvoted',
+        ]
