@@ -283,4 +283,5 @@ class DiscussionSerializer(ModelSerializer):
             'comment',
             'upvoted',
             'downvoted',
+            'isUpvoted'
         ]

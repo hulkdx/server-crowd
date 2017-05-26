@@ -54,6 +54,7 @@ class Discussion(models.Model):
     comment = models.CharField(max_length=500, default='')
     upvoted = models.IntegerField(default=0)
     downvoted = models.IntegerField(default=0)
+    isUpvoted = models.NullBooleanField(default=None)
 
 
 class ProposalVoteUser(models.Model):
