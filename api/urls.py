@@ -14,6 +14,9 @@ urlpatterns = [
     # /api/vote
     url(r'^vote$', views.ProposalVoteUpdate.as_view(), name='proposals'),
 
+    # /api/discussion/proposal_id/
+    url(r'^discussion/(?P<pk>\d+)$', views.DiscussionListAPIView.as_view(), name='proposals'),
+
     # /api/register
     url(r'^register$', views.UserCreate.as_view(), name='register'),
     # /api/login

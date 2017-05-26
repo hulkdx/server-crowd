@@ -8,8 +8,8 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from .serializers import ProposalSerializer, UserCreateSerializer, UserLoginSerializer, ProposalCreateSerializer, \
-    CategorySerializer, ProposalVoteUpdateSerializer
-from .models import Proposal, Profile, Category, ProposalVoteUser
+    CategorySerializer, ProposalVoteUpdateSerializer, DiscussionSerializer
+from .models import Proposal, Profile, Category, ProposalVoteUser, Discussion
 
 User = get_user_model()
 
@@ -25,7 +25,7 @@ class ProposalCreate(CreateAPIView):
 
 
 class ProposalListAPIView(ListAPIView):
-    queryset = Proposal.objects.all()
+    queryset = Proposal.objects.all().order_by('-deadline')
     serializer_class = ProposalSerializer
 
     # This will filter base on user
@@ -70,6 +70,16 @@ class UserLogin(APIView):
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
+# --- Category ---
 class CategoryListAPIView(ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+
+class DiscussionListAPIView(ListAPIView):
+    queryset = Discussion.objects.all()
+    serializer_class = DiscussionSerializer
+
+    def get_queryset(self):
+        proposal = Proposal.objects.filter(id=self.kwargs['pk'])
+        return Discussion.objects.filter(proposal=proposal)

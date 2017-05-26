@@ -48,6 +48,14 @@ class Category(models.Model):
         return "name: " + str(self.name)
 
 
+class Discussion(models.Model):
+    user = models.ForeignKey('Profile')
+    proposal = models.ForeignKey('Proposal')
+    comment = models.CharField(max_length=500, default='')
+    upvoted = models.IntegerField(default=0)
+    downvoted = models.IntegerField(default=0)
+
+
 class ProposalVoteUser(models.Model):
     user = models.ForeignKey('Profile')
     proposal = models.ForeignKey('Proposal')

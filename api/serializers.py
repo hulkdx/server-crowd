@@ -5,11 +5,12 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer, EmailField, CharField, IntegerField, BooleanField
 from rest_framework_jwt.settings import api_settings
-from .models import Proposal, Profile, Category, ProposalVoteUser
+from .models import Proposal, Profile, Category, ProposalVoteUser, Discussion
 
 User = get_user_model()
 
 
+# Profile
 class ProfileSerializer(ModelSerializer):
     first_name = SlugRelatedField(source='user', slug_field='first_name', read_only=True)
     last_name = SlugRelatedField(source='user', slug_field='last_name', read_only=True)
@@ -32,6 +33,7 @@ class ProfileSerializer(ModelSerializer):
         ]
 
 
+# Proposals
 class ProposalSerializer(ModelSerializer):
     category_id = SlugRelatedField(source='category', slug_field='id', read_only=True)
     category_name = SlugRelatedField(source='category', slug_field='name', read_only=True)
@@ -155,12 +157,14 @@ class ProposalVoteUpdateSerializer(ModelSerializer):
         return validated_data
 
 
+# Category
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
 
+# Users
 class UserCreateSerializer(ModelSerializer):
     email2 = EmailField(label='Confirm Email')
 
@@ -246,3 +250,11 @@ class UserLoginSerializer(ModelSerializer):
         data['token'] = jwt_encode_handler(payload)
 
         return data
+
+
+# Discussion
+# Category
+class DiscussionSerializer(ModelSerializer):
+    class Meta:
+        model = Discussion
+        fields = '__all__'
